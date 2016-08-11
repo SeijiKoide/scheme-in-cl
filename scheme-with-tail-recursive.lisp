@@ -104,7 +104,10 @@
                         ;; Finally, rename the last expression as x
                         (setf x (first x))
                         (go :INTERP))
-          (scheme:set!  (set-var! (second x) (interp (third x) env) env))
+          (scheme:set!  (let ((val (interp (third x) env)))
+                          (when (proc-p val)
+                            (setf (proc-name val) (second x)))
+                          (set-var! (second x) val env)))
           (if           (setf x (if (interp (second x) env)
                                     (third x)
                                   (fourth x)))
